@@ -990,5 +990,67 @@
   "price": 295,
   "weight": "250 г",
   "img": "./assets/photos/Овощи гриль.webp"
-}
-
+},
+  {
+    "id": "soevyy-sous",
+    "category": "Соусы",
+    "name": "Соевый соус",
+    "desc": "Классический соевый соус.",
+    "price": 30,
+    "weight": "40 г",
+    "img": "./assets/photos/Соевый соус.webp"
+  },
+  {
+    "id": "imbir",
+    "category": "Соусы",
+    "name": "Имбирь",
+    "desc": "Маринованный имбирь.",
+    "price": 30,
+    "weight": "20 г",
+    "img": "./assets/photos/Имбирь.webp"
+  },
+  {
+    "id": "vasabi",
+    "category": "Соусы",
+    "name": "Васаби",
+    "desc": "Острый японский васаби.",
+    "price": 30,
+    "weight": "20 г",
+    "img": "./assets/photos/Васаби.webp"
+  },
+  {
+    "id": "sous-spasi",
+    "category": "Соусы",
+    "name": "Соус «Спаси» (острый)",
+    "desc": "Острый фирменный соус.",
+    "price": 40,
+    "weight": "25 г",
+    "img": "./assets/photos/Соус Спаси острый.webp"
+  },
+  {
+    "id": "heinz-syrnyy",
+    "category": "Соусы",
+    "name": "Соус Heinz сырный",
+    "desc": "Сырный соус Heinz.",
+    "price": 30,
+    "weight": "25 г",
+    "img": "./assets/photos/Соус Heinz сырный.webp"
+  },
+  {
+    "id": "heinz-kislo-sladkiy",
+    "category": "Соусы",
+    "name": "Соус Heinz кисло-сладкий",
+    "desc": "Кисло-сладкий соус Heinz.",
+    "price": 30,
+    "weight": "25 г",
+    "img": "./assets/photos/Соус Heinz кисло сладкий.webp"
+  },
+  {
+    "id": "heinz-bbq",
+    "category": "Соусы",
+    "name": "Соус Heinz барбекю",
+    "desc": "Соус барбекю Heinz.",
+    "price": 30,
+    "weight": "25 г",
+    "img": "./assets/photos/Соус Heinz барбекю.webp"
+  },
