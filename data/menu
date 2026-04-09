@@ -1054,3 +1054,147 @@
     "weight": "25 г",
     "img": "./assets/photos/Соус Heinz барбекю.webp"
   },
+  {
+    "id": "gunkan-nori-tekka",
+    "category": "Гунканы и суши",
+    "name": "Гункан нори текка",
+    "desc": "Тунец, помидор, соус «Спайси», нори, рис.",
+    "price": 85,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан нори текка.webp"
+  },
+  {
+    "id": "gunkan-nori-unagi",
+    "category": "Гунканы и суши",
+    "name": "Гункан нори унаги",
+    "desc": "Угорь, помидор, соус «Спайси», нори, рис.",
+    "price": 75,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан нори унаги.webp"
+  },
+  {
+    "id": "gunkan-nori-ebi",
+    "category": "Гунканы и суши",
+    "name": "Гункан нори эби",
+    "desc": "Креветка, помидор, соус «Спайси», нори, рис.",
+    "price": 115,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан нори эби.webp"
+  },
+  {
+    "id": "sushi-sake",
+    "category": "Гунканы и суши",
+    "name": "Суши сяке",
+    "desc": "Лосось, рис.",
+    "price": 115,
+    "weight": "45 г",
+    "img": "./assets/photos/Суши сяке.webp"
+  },
+  {
+    "id": "sushi-tekka",
+    "category": "Гунканы и суши",
+    "name": "Суши текка",
+    "desc": "Тунец, рис.",
+    "price": 85,
+    "weight": "45 г",
+    "img": "./assets/photos/Суши текка.webp"
+  },
+  {
+    "id": "sushi-unagi",
+    "category": "Гунканы и суши",
+    "name": "Суши унаги",
+    "desc": "Угорь, нори, рис.",
+    "price": 135,
+    "weight": "45 г",
+    "img": "./assets/photos/Суши унаги.webp"
+  },
+  {
+    "id": "sushi-ebi",
+    "category": "Гунканы и суши",
+    "name": "Суши эби",
+    "desc": "Креветка, соус «Спайси», рис.",
+    "price": 115,
+    "weight": "45 г",
+    "img": "./assets/photos/Суши эби.webp"
+  },
+  {
+    "id": "gunkan-kappa-masago",
+    "category": "Гунканы и суши",
+    "name": "Гункан каппа масаго",
+    "desc": "Икра «Масаго», огурец, помидор, соус «Спайси», рис.",
+    "price": 85,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан каппа масаго.webp"
+  },
+  {
+    "id": "gunkan-kappa-surimi",
+    "category": "Гунканы и суши",
+    "name": "Гункан каппа сурими",
+    "desc": "Снежный краб, огурец, помидор, соус «Спайси», рис.",
+    "price": 55,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан каппа сурими.webp"
+  },
+  {
+    "id": "gunkan-kappa-sake",
+    "category": "Гунканы и суши",
+    "name": "Гункан каппа сяке",
+    "desc": "Лосось, огурец, помидор, соус «Спайси», рис.",
+    "price": 95,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан каппа сяке.webp"
+  },
+  {
+    "id": "gunkan-kappa-tekka",
+    "category": "Гунканы и суши",
+    "name": "Гункан каппа текка",
+    "desc": "Тунец, огурец, помидор, соус «Спайси», рис.",
+    "price": 75,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан каппа текка.webp"
+  },
+  {
+    "id": "gunkan-kappa-unagi",
+    "category": "Гунканы и суши",
+    "name": "Гункан каппа унаги",
+    "desc": "Угорь, огурец, помидор, соус «Спайси», рис.",
+    "price": 75,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан каппа унаги.webp"
+  },
+  {
+    "id": "gunkan-kappa-ebi",
+    "category": "Гунканы и суши",
+    "name": "Гункан каппа эби",
+    "desc": "Креветка, огурец, помидор, соус «Спайси», рис.",
+    "price": 115,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан каппа эби.webp"
+  },
+  {
+    "id": "gunkan-nori-masago",
+    "category": "Гунканы и суши",
+    "name": "Гункан нори масаго",
+    "desc": "Икра «Масаго», помидор, соус «Спайси», нори, рис.",
+    "price": 95,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан нори масаго.webp"
+  },
+  {
+    "id": "gunkan-nori-surimi",
+    "category": "Гунканы и суши",
+    "name": "Гункан нори сурими",
+    "desc": "Снежный краб, помидор, соус «Спайси», нори, рис.",
+    "price": 55,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан нори сурими.webp"
+  },
+  {
+    "id": "gunkan-nori-sake",
+    "category": "Гунканы и суши",
+    "name": "Гункан нори сяке",
+    "desc": "Лосось, помидор, соус «Спайси», нори, рис.",
+    "price": 105,
+    "weight": "50 г",
+    "img": "./assets/photos/Гункан нори сяке.webp"
+  },
