@@ -1193,7 +1193,7 @@
       "properties": {
         "zone": "Ф2 - Кичигина",
         "restaurant": "Кичигина 8",
-        "deliveryPrice": 150
+        "deliveryPrice": 0
       },
       "geometry": {
         "type": "Polygon",
@@ -2483,7 +2483,7 @@
       "properties": {
         "zone": "Ф3 - Театральная",
         "restaurant": "Театральная 1/1",
-        "deliveryPrice": 150
+        "deliveryPrice": 0
       },
       "geometry": {
         "type": "Polygon",
