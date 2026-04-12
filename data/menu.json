@@ -1097,7 +1097,7 @@
     "desc": "Классический соевый соус.",
     "price": 30,
     "weight": "40 г",
-    "img": "./assets/photos/Соевый соус.webp"
+    "img": "./assets/photos/Соевый.webp"
   },
   {
     "id": "imbir",
@@ -1124,7 +1124,7 @@
     "desc": "Острый фирменный соус.",
     "price": 40,
     "weight": "25 г",
-    "img": "./assets/photos/Соус Спаси острый.webp"
+    "img": "./assets/photos/Спайси.webp"
   },
   {
     "id": "heinz-syrnyy",
@@ -1133,7 +1133,7 @@
     "desc": "Сырный соус Heinz.",
     "price": 30,
     "weight": "25 г",
-    "img": "./assets/photos/Соус Heinz сырный.webp"
+    "img": "./assets/photos/Сырный.webp"
   },
   {
     "id": "heinz-kislo-sladkiy",
@@ -1142,7 +1142,7 @@
     "desc": "Кисло-сладкий соус Heinz.",
     "price": 30,
     "weight": "25 г",
-    "img": "./assets/photos/Соус Heinz кисло сладкий.webp"
+    "img": "./assets/photos/Кисло сладкий.webp"
   },
   {
     "id": "heinz-bbq",
@@ -1151,7 +1151,7 @@
     "desc": "Соус барбекю Heinz.",
     "price": 30,
     "weight": "25 г",
-    "img": "./assets/photos/Соус Heinz барбекю.webp"
+    "img": "./assets/photos/Барбекю.webp"
   },
   {
     "id": "gunkan-nori-tekka",
