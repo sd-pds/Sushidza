@@ -665,7 +665,7 @@
   "desc": "Клюква, смородина",
   "price": 180,
   "weight": "1000 г",
-  "img": "./assets/photos/Морс Клюква Смородина 1л.webp"
+  "img": "./assets/photos/Морс.webp"
 },
 {
   "id": "kola-1l",
@@ -674,7 +674,7 @@
   "desc": "",
   "price": 200,
   "weight": "1000 г",
-  "img": "./assets/photos/Кола 1л.webp"
+  "img": "./assets/photos/Газировка.webp"
 },
 {
   "id": "fanta-1l",
@@ -683,7 +683,7 @@
   "desc": "",
   "price": 200,
   "weight": "1000 г",
-  "img": "./assets/photos/Фанта 1л.webp"
+  "img": "./assets/photos/Газировка.webp"
 },
 {
   "id": "sprite-1l",
@@ -692,7 +692,7 @@
   "desc": "",
   "price": 200,
   "weight": "1000 г",
-  "img": "./assets/photos/Спрайт 1л.webp"
+  "img": "./assets/photos/Газировка.webp"
 },
 {
   "id": "udon-govyadina",
