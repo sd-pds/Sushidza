@@ -99,14 +99,21 @@ async function renderPromotions(configPromotions = []) {
   if (!promoSlider) return;
 
   const configItems = (Array.isArray(configPromotions) ? configPromotions : [])
-    .filter(item => item && (item.image || item.title || item.text))
-    .map(item => ({ ...item }));
+    .filter(item => item && item.visible !== false)
+    .map(item => ({
+      ...item,
+      image: item.image || item.path || '',
+      title: item.title || item.name || 'Акция'
+    }))
+    .filter(item => item.image || item.title || item.text);
 
   const configImageSet = new Set(configItems.map(item => item.image).filter(Boolean));
   const autoImages = await discoverPromoImages();
-  const autoItems = autoImages
-    .filter(path => !configImageSet.has(path))
-    .map(path => ({ image: path, title: 'Акция' }));
+  const autoItems = configItems.length
+    ? []
+    : autoImages
+        .filter(path => !configImageSet.has(path))
+        .map(path => ({ image: path, title: 'Акция' }));
 
   const promoItems = [...configItems, ...autoItems];
 
@@ -200,7 +207,7 @@ const els = {
 const addressInput = document.getElementById("addressInput");
 const suggestBox = document.getElementById("addressSuggest");
 
-const STORAGE_KEY = "prozharim_local_v1";
+const STORAGE_KEY = "sushidza_local_v1";
 const ORENBURG_UTC_OFFSET_MS = 5 * 60 * 60 * 1000;
 let MIN_DELIVERY_SUBTOTAL = 700;
 let SMALL_ORDER_DELIVERY_SURCHARGE = 150;
@@ -218,6 +225,7 @@ let ZONES = null;
 let ZONES_DAY = null;
 let ZONES_NIGHT = null;
 let PROMOS = [];
+let PROMOTION_BANNERS = [];
 
 let state = {
   category: "Все",
@@ -1841,8 +1849,9 @@ async function init() {
     }
   });
 
-  MENU = await fetch("data/menu.json").then(r => r.json());
+  MENU = await fetch("data/menu.json").then(r => r.json()).then(items => (Array.isArray(items) ? items : []).filter(item => item?.visible !== false));
   PROMOS = await fetch("data/promokod.json").then(r => r.json()).then(parsePromos).catch(() => []);
+  PROMOTION_BANNERS = await fetch("data/promotions.json", { cache: "no-store" }).then(r => r.ok ? r.json() : []).catch(() => []);
   ZONES_DAY = await fetch("data/zones_day.geojson").then(r => r.json()).catch(() => null);
   ZONES_NIGHT = await fetch("data/zones_night.geojson").then(r => r.json()).catch(() => null);
   ZONES = ZONES_DAY || ZONES_NIGHT || await fetch("data/zones.geojson").then(r => r.json()).catch(() => null);
@@ -1855,6 +1864,7 @@ async function init() {
   renderHits();
   renderCartBadge();
   renderTotals();
+  await renderPromotions(PROMOTION_BANNERS);
 
   setMode("delivery");
 }
