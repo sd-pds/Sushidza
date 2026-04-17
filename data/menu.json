@@ -1,12 +1,5 @@
 [
   {
-    "id": "onigiri1",
-    "category": "Онигири",
-    "name": "Онигири с лососем",
-    "price": 280,
-    "img": "./assets/photos/Онигири-с-лососем.webp"
-  },
-  {
     "id": "set-13",
     "category": "Сеты",
     "name": "Сет №13 (40 шт.)",
@@ -1960,5 +1953,123 @@
     "price": 365,
     "weight": "250 г",
     "img": "./assets/photos/Тамаго маки тен ролл.webp"
+  },
+  {
+    "id": "onigiri-losos",
+    "category": "Онигири",
+    "name": "Онигири с лососем",
+    "desc": "Рис, лосось, огурец, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с лососем.webp"
+  },
+  {
+    "id": "onigiri-krab",
+    "category": "Онигири",
+    "name": "Онигири с крабом",
+    "desc": "Рис, краб, огурец, масаго, майонез",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с крабом.webp"
+  },
+  {
+    "id": "onigiri-fresh",
+    "category": "Онигири",
+    "name": "Онигири фреш",
+    "desc": "Рис, лосось, ананас, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири фреш.webp"
+  },
+  {
+    "id": "onigiri-krevetka",
+    "category": "Онигири",
+    "name": "Онигири с креветкой",
+    "desc": "Рис, креветка, огурец, масаго, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с креветкой.webp"
+  },
+  {
+    "id": "onigiri-ygr",
+    "category": "Онигири",
+    "name": "Онигири с угрем",
+    "desc": "Рис, угорь, огурец, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с угрем.webp"
+  },
+  {
+    "id": "onigiri-tynec",
+    "category": "Онигири",
+    "name": "Онигири с тунцом",
+    "desc": "Рис, тунец, майонез",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с тунцом.webp"
+  },
+  {
+    "id": "onigiri-midii",
+    "category": "Онигири",
+    "name": "Онигири с мидиями",
+    "desc": "Рис, мидии, перец, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с мидиями.webp"
+  },
+  {
+    "id": "onigiri-kurica",
+    "category": "Онигири",
+    "name": "Онигири с курицей",
+    "desc": "Рис, курица, помидор, пекинка, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с курицей.webp"
+  },
+  {
+    "id": "onigiri-osminog",
+    "category": "Онигири",
+    "name": "Онигири с осминогом",
+    "desc": "Рис, осминог, помидор, спайси, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с осминогом.webp"
+  },
+  {
+    "id": "onigiri-losos-teriaki",
+    "category": "Онигири",
+    "name": "Онигири с лососем Терияки",
+    "desc": "Рис, Терияки, помидор, сыр",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с лососем терияки.webp"
+  },
+  {
+    "id": "onigiri-combo-3",
+    "category": "Онигири",
+    "name": "Онигири 3 шт.",
+    "desc": "С курицей, с креветкой, фреш",
+    "price": 280,
+    "weight": "345 г",
+    "img": "./assets/photos/Онигири комбо 3.webp"
+  },
+  
+  {
+    "id": "onigiri-combo-5",
+    "category": "Онигири",
+    "name": "Онигири 5 шт.",
+    "desc": "С лососем Терияки, с курицей, с тунцом, с мидиями, с крабом",
+    "price": 280,
+    "weight": "575 г",
+    "img": "./assets/photos/Онигири комбо 5.webp"
+  },
+  {
+    "id": "onigiri-combo-8",
+    "category": "Онигири",
+    "name": "Онигири 8 шт.",
+    "desc": "С курицей, с крабом, фреш, с мидиями, с угрем, с тунцом, с креветкой, с осминогом",
+    "price": 280,
+    "weight": "115 г",
+    "img": "./assets/photos/Онигири с лососем.webp"
   }
 ]
