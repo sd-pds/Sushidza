@@ -58,9 +58,27 @@ function socialButtonMarkup(item = {}) {
 }
 function promoMarkup(item = {}) {
   const title = item.title || 'Акция';
-  const img = item.image ? `<img class="promoSlide__img" src="${htmlEscape(item.image)}" alt="${htmlEscape(title)}" loading="lazy">` : '';
-  const content = item.title || item.text || item.badge ? `<div class="promoSlide__content">${item.badge ? `<div class="promoSlide__badge">${htmlEscape(item.badge)}</div>` : ''}${item.title ? `<div class="promoSlide__title">${htmlEscape(item.title)}</div>` : ''}${item.text ? `<div class="promoSlide__text">${htmlEscape(item.text)}</div>` : ''}${item.link ? `<a class="btn btn--ghost" href="${htmlEscape(item.link)}">Подробнее</a>` : ''}</div>` : '';
-  return `<article class="promoSlide">${img}${content}</article>`;
+  const hasLink = Boolean(item.link);
+  const tag = hasLink ? 'a' : 'article';
+  const href = hasLink
+    ? ` href="${htmlEscape(item.link)}" target="_blank" rel="noopener noreferrer"`
+    : '';
+
+  const img = item.image
+    ? `<img class="promoSlide__img" src="${htmlEscape(item.image)}" alt="${htmlEscape(title)}" loading="lazy">`
+    : '';
+
+  const content = (item.badge || item.title || item.text)
+    ? `
+      <div class="promoSlide__content">
+        ${item.badge ? `<div class="promoSlide__badge">${htmlEscape(item.badge)}</div>` : ''}
+        ${item.title ? `<div class="promoSlide__title">${htmlEscape(item.title)}</div>` : ''}
+        ${item.text ? `<div class="promoSlide__text">${htmlEscape(item.text)}</div>` : ''}
+      </div>
+    `
+    : '';
+
+  return `<${tag} class="promoSlide${hasLink ? ' promoSlide--link' : ''}"${href}>${img}${content}</${tag}>`;
 }
 async function assetExists(path) {
   try {
