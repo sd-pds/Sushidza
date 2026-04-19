@@ -72,7 +72,7 @@ async function assetExists(path) {
 }
 async function discoverPromoImages() {
   const candidates = [];
-  const maxAutoPromoFiles = 100;
+  const maxAutoPromoFiles = 15;
   const numberedBases = ['promo-', 'promo_', ''];
   const exts = ['png', 'webp', 'jpg', 'jpeg', 'svg'];
 
