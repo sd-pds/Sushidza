@@ -526,51 +526,6 @@
     "img": "./assets/photos/Тар тар ролл.webp"
   },
   {
-    "id": "desertnyy-roll-kivi",
-    "category": "Запеченные роллы",
-    "name": "Десертный ролл с киви",
-    "desc": "",
-    "price": 295,
-    "weight": "",
-    "img": "./assets/photos/Десертный ролл с киви.webp"
-  },
-  {
-    "id": "desertnyy-roll-banan",
-    "category": "Запеченные роллы",
-    "name": "Десертный ролл с бананом",
-    "desc": "",
-    "price": 345,
-    "weight": "",
-    "img": "./assets/photos/Десертный ролл с бананом.webp"
-  },
-  {
-    "id": "desertnyy-roll-grusha",
-    "category": "Запеченные роллы",
-    "name": "Десертный ролл с грушей",
-    "desc": "",
-    "price": 345,
-    "weight": "",
-    "img": "./assets/photos/Десертный ролл с грушей.webp"
-  },
-  {
-    "id": "desertnyy-roll-yabloko",
-    "category": "Запеченные роллы",
-    "name": "Десертный ролл с яблоком",
-    "desc": "",
-    "price": 325,
-    "weight": "",
-    "img": "./assets/photos/Десертный ролл с яблоком.webp"
-  },
-  {
-    "id": "desertnyy-roll-yabloko-grusha",
-    "category": "Запеченные роллы",
-    "name": "Десертный ролл с яблоком и грушей",
-    "desc": "",
-    "price": 325,
-    "weight": "",
-    "img": "./assets/photos/Десертный ролл с яблоком и грушей.webp"
-  },
-  {
     "id": "kappa-maki-roll",
     "category": "Классические роллы",
     "name": "Каппа маки ролл (8 шт.)",
