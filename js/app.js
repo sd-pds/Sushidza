@@ -943,12 +943,68 @@ function getPromoDiscount() {
   return getManualPromoDiscount();
 }
 
-function getActiveDiscountLabel() {
-  if (getHappyHoursDiscount() > 0) return 'Счастливые часы';
-  if (state.promo.applied && getManualPromoDiscount() > 0) {
-    return state.promo.code || state.promo.title || 'Промокод';
+function getDiscountState() {
+  const pickupDiscountRaw = state.mode === "pickup"
+    ? Math.round(cartSum() * PICKUP_DISCOUNT_PERCENT / 100)
+    : 0;
+  const promoDiscountRaw = getPromoDiscount();
+  const giftPromoActive = Boolean(state.promo?.applied && state.promo?.type === "gift");
+
+  if (giftPromoActive) {
+    return {
+      pickupDiscount: 0,
+      promoDiscount: 0,
+      activeLabel: state.promo.title || state.promo.code || 'Промокод',
+      winner: 'gift'
+    };
   }
-  return '—';
+
+  if (pickupDiscountRaw > 0 && promoDiscountRaw > 0) {
+    if (promoDiscountRaw >= pickupDiscountRaw) {
+      return {
+        pickupDiscount: 0,
+        promoDiscount: promoDiscountRaw,
+        activeLabel: state.promo.title || state.promo.code || 'Промокод',
+        winner: 'promo'
+      };
+    }
+
+    return {
+      pickupDiscount: pickupDiscountRaw,
+      promoDiscount: 0,
+      activeLabel: `Самовывоз ${PICKUP_DISCOUNT_PERCENT}%`,
+      winner: 'pickup'
+    };
+  }
+
+  if (promoDiscountRaw > 0) {
+    return {
+      pickupDiscount: 0,
+      promoDiscount: promoDiscountRaw,
+      activeLabel: state.promo.title || state.promo.code || 'Промокод',
+      winner: 'promo'
+    };
+  }
+
+  if (pickupDiscountRaw > 0) {
+    return {
+      pickupDiscount: pickupDiscountRaw,
+      promoDiscount: 0,
+      activeLabel: `Самовывоз ${PICKUP_DISCOUNT_PERCENT}%`,
+      winner: 'pickup'
+    };
+  }
+
+  return {
+    pickupDiscount: 0,
+    promoDiscount: 0,
+    activeLabel: '—',
+    winner: 'none'
+  };
+}
+
+function getActiveDiscountLabel() {
+  return getDiscountState().activeLabel;
 }
 
 function clearPromoState(resetInput = false) {
@@ -1012,16 +1068,25 @@ function applyPromoCode(showSuccessToast = true) {
     return true;
   }
 
-  state.promo.discount = getPromoDiscount();
+  const discountState = getDiscountState();
+  state.promo.discount = discountState.promoDiscount;
 
   if (els.promoHint) {
-    els.promoHint.textContent = `Промокод применён: ${state.promo.title} — ${promo.percent}%`;
+    if (discountState.winner === 'pickup') {
+      els.promoHint.textContent = `Промокод принят, но сейчас выгоднее скидка самовывоза ${PICKUP_DISCOUNT_PERCENT}%.`; 
+    } else {
+      els.promoHint.textContent = `Промокод применён: ${state.promo.title} — ${promo.percent}%`;
+    }
   }
 
   renderTotals();
 
   if (showSuccessToast) {
-    showToast(`Промокод применён: ${promo.percent}%`);
+    if (discountState.winner === 'pickup') {
+      showToast(`Скидка самовывоза ${PICKUP_DISCOUNT_PERCENT}% выгоднее этого промокода`);
+    } else {
+      showToast(`Промокод применён: ${promo.percent}%`);
+    }
   }
 
   return true;
@@ -1313,8 +1378,7 @@ function getNightMarkup() {
 }
 
 function getPickupDiscount() {
-  if (state.mode !== "pickup") return 0;
-  return Math.round(cartSum() * PICKUP_DISCOUNT_PERCENT / 100);
+  return getDiscountState().pickupDiscount;
 }
 
 function validateOrderWindow({ whenType, whenDate } = {}) {
@@ -1596,8 +1660,9 @@ function renderTotals() {
   const subtotal = cartSum();
   const cutleryPrice = getCutleryPrice();
   const nightMarkup = getNightMarkup();
-  const pickupDiscount = getPickupDiscount();
-  const promoDiscount = getPromoDiscount();
+  const discountState = getDiscountState();
+  const pickupDiscount = discountState.pickupDiscount;
+  const promoDiscount = discountState.promoDiscount;
   const smallOrderSurcharge = getSmallOrderDeliverySurcharge();
 
   state.pricing.tariff = getTariffInfo(getEffectiveOrderDate()).tariff;
@@ -1638,7 +1703,7 @@ function renderTotals() {
       els.promoDiscountRow.hidden = false;
       els.promoDiscountRow.style.display = "flex";
       els.sumPromoDiscount.textContent = `−${rub(promoDiscount)}`;
-      els.promoBadge.textContent = getActiveDiscountLabel();
+      els.promoBadge.textContent = discountState.activeLabel;
     } else {
       els.promoDiscountRow.hidden = true;
       els.promoDiscountRow.style.display = "none";
@@ -1761,10 +1826,11 @@ function buildOrderPayload(form) {
   const cutleryPaid = getCutleryPaidCount();
   const cutleryPrice = getCutleryPrice();
   const nightMarkup = getNightMarkup();
-  const pickupDiscount = getPickupDiscount();
-  const promoDiscount = getPromoDiscount();
+  const discountState = getDiscountState();
+  const pickupDiscount = discountState.pickupDiscount;
+  const promoDiscount = discountState.promoDiscount;
   const happyHoursDiscount = getHappyHoursDiscount();
-  const manualPromoDiscount = happyHoursDiscount > 0 ? 0 : getManualPromoDiscount();
+  const manualPromoDiscount = happyHoursDiscount > 0 ? 0 : (discountState.winner === 'promo' ? getManualPromoDiscount() : 0);
 
   const total = Math.max(0, subtotal + cutleryPrice + nightMarkup + (delivery.price || 0) - pickupDiscount - promoDiscount);
 
