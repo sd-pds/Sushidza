@@ -12,7 +12,32 @@
   {
     "image": "assets/promos/promo-3.webp",
     "title": "Наши филиалы",
-    "text": "Наши филиалы",
-    "link": "https://звезда-любви.рф"
+    "text": "Адреса точек самовывоза"
+  },
+  {
+    "image": "assets/promos/promo-4.webp",
+    "title": "Доставка",
+    "text": "Бесплатная доставка по городу от 30 минут"
+  },
+  {
+    "image": "assets/promos/promo-5.webp",
+    "title": "Режим работы",
+    "text": "Работаем ежедневно с 11:00 до 03:00"
+  },
+  {
+    "image": "assets/promos/promo-6.webp",
+    "title": "Оформление заказа",
+    "text": "Оформить заказ можно на сайте или по телефону 89228863605",
+    "link": "tel:+79228863605"
+  },
+  {
+    "image": "assets/promos/promo-7.webp",
+    "title": "Самовывоз",
+    "text": "Скидка 10% за самовывоз заказа"
+  },
+  {
+    "image": "assets/promos/promo-8.webp",
+    "title": "Отзыв",
+    "text": "Скидка 10% за отзыв о заказе"
   }
 ]
