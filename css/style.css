@@ -576,15 +576,39 @@ input:focus,select:focus{border-color:rgba(var(--accentRgb),.45)}
 .muted{color:var(--muted)}
 
 .toast{
-  display:none;
-  margin-top:10px;
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.12);
-  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(var(--accentRgb),.06));
+  position:fixed;
+  left:50%;
+  bottom:calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index:10050;
+  width:min(calc(100vw - 24px), 520px);
+  padding:14px 16px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg, rgba(18,18,22,.96), rgba(10,10,14,.96));
+  box-shadow:0 20px 55px rgba(0,0,0,.42), 0 0 0 1px rgba(var(--accentRgb),.08) inset;
   color:var(--txt);
+  text-align:center;
+  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  transform:translate(-50%, 18px);
+  transition:opacity .22s ease, transform .22s ease, visibility .22s ease;
+  backdrop-filter:blur(14px);
 }
-.toast.isOn{display:block}
+.toast.isOn{
+  opacity:1;
+  visibility:visible;
+  transform:translate(-50%, 0);
+}
+@media (max-width:640px){
+  .toast{
+    width:min(calc(100vw - 20px), 560px);
+    bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+    padding:13px 14px;
+    border-radius:16px;
+    font-size:14px;
+  }
+}
 
 .field--suggest{position:relative}
 
