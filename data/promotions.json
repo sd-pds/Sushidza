@@ -1,0 +1,18 @@
+[
+  {
+    "image": "assets/promos/promo-1.webp",
+    "title": "Онигири в подарок",
+    "text": "3 онигири в подрарок при заказе от 1500 руб."
+  },
+  {
+    "image": "assets/promos/promo-2.webp",
+    "title": "Скидка в День рождения",
+    "text": "Скидка 10% в День рождения"
+  },
+  {
+    "image": "assets/promos/promo-3.webp",
+    "title": "Наши филиалы",
+    "text": "Наши филиалы",
+    "link": "https://звезда-любви.рф"
+  }
+]
