@@ -632,7 +632,7 @@ function decFromCart(key) {
     resetAppliedPromo({
       resetInput: true,
       render: true,
-      message: 'Подарочные онигири убраны. Промокод сброшен.'
+      message: 'Подарочные товары убраны. Промокод сброшен.'
     });
     return;
   }
@@ -1002,11 +1002,11 @@ function applyPromoCode(showSuccessToast = true) {
     renderTotals();
 
     if (els.promoHint) {
-      els.promoHint.textContent = `Промокод применён: ${state.promo.title}. 3 онигири добавлены в корзину.`;
+      els.promoHint.textContent = `Промокод применён: ${state.promo.title}. Подарочные товары добавлены в корзину.`;
     }
 
     if (showSuccessToast) {
-      showToast('Промокод ОНИГИРИ применён. 3 онигири добавлены в корзину.');
+      showToast('Промокод применён. Подарочные товары добавлены в корзину.');
     }
 
     return true;
