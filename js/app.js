@@ -187,6 +187,8 @@ const els = {
   sumCutlery: document.getElementById("sumCutlery"),
   sumNight: document.getElementById("sumNight"),
   nightMarkupRow: document.getElementById("nightMarkupRow"),
+  sumPickupDiscount: document.getElementById("sumPickupDiscount"),
+  pickupDiscountRow: document.getElementById("pickupDiscountRow"),
 
   toast: document.getElementById("toast"),
   mapInfo: document.getElementById("mapInfo"),
@@ -234,6 +236,7 @@ const PICKUP_POINTS = [
 ];
 
 const PROMO_GIFT_PLACEHOLDER_IMAGE = "./assets/photos/нет фото.webp";
+const PICKUP_DISCOUNT_PERCENT = 10;
 
 let state = {
   category: "Все",
@@ -256,7 +259,8 @@ let state = {
   pricing: {
     tariff: "day",
     tariffLabel: "Дневной",
-    nightMarkup: 0
+    nightMarkup: 0,
+    pickupDiscount: 0
   },
   promo: {
     code: "",
@@ -1290,6 +1294,11 @@ function getNightMarkup() {
   return Math.round((subtotal + cutleryPrice + deliveryPrice) * 0.10);
 }
 
+function getPickupDiscount() {
+  if (state.mode !== "pickup") return 0;
+  return Math.round(cartSum() * PICKUP_DISCOUNT_PERCENT / 100);
+}
+
 function validateOrderWindow({ whenType, whenDate } = {}) {
   const type = whenType || (els.checkoutForm?.elements?.whenType?.value || "now");
   const rawDate = whenDate || (els.checkoutForm?.elements?.whenDate?.value || "");
@@ -1569,12 +1578,14 @@ function renderTotals() {
   const subtotal = cartSum();
   const cutleryPrice = getCutleryPrice();
   const nightMarkup = getNightMarkup();
+  const pickupDiscount = getPickupDiscount();
   const promoDiscount = getPromoDiscount();
   const smallOrderSurcharge = getSmallOrderDeliverySurcharge();
 
   state.pricing.tariff = getTariffInfo(getEffectiveOrderDate()).tariff;
   state.pricing.tariffLabel = getTariffInfo(getEffectiveOrderDate()).tariffLabel;
   state.pricing.nightMarkup = nightMarkup;
+  state.pricing.pickupDiscount = pickupDiscount;
   state.promo.discount = promoDiscount;
 
   if (els.sumProducts) els.sumProducts.textContent = rub(subtotal);
@@ -1589,6 +1600,18 @@ function renderTotals() {
       els.nightMarkupRow.hidden = true;
       els.nightMarkupRow.style.display = "none";
       els.sumNight.textContent = "0 ₽";
+    }
+  }
+
+  if (els.pickupDiscountRow && els.sumPickupDiscount) {
+    if (pickupDiscount > 0) {
+      els.pickupDiscountRow.hidden = false;
+      els.pickupDiscountRow.style.display = "flex";
+      els.sumPickupDiscount.textContent = `−${rub(pickupDiscount)}`;
+    } else {
+      els.pickupDiscountRow.hidden = true;
+      els.pickupDiscountRow.style.display = "none";
+      els.sumPickupDiscount.textContent = "0 ₽";
     }
   }
 
@@ -1608,7 +1631,7 @@ function renderTotals() {
 
   const deliveryBasePrice = state.mode === "delivery" && typeof state.delivery.price === "number" ? state.delivery.price : 0;
   const deliveryPrice = deliveryBasePrice + smallOrderSurcharge;
-  const finalTotal = Math.max(0, subtotal + cutleryPrice + nightMarkup + deliveryPrice - promoDiscount);
+  const finalTotal = Math.max(0, subtotal + cutleryPrice + nightMarkup + deliveryPrice - pickupDiscount - promoDiscount);
 
   if (state.mode === "delivery") {
     if (state.delivery.available && typeof state.delivery.price === "number") {
@@ -1618,11 +1641,11 @@ function renderTotals() {
       if (els.sumTotal) els.sumTotal.textContent = rub(finalTotal);
     } else {
       if (els.sumDelivery) els.sumDelivery.textContent = "Недоступно";
-      if (els.sumTotal) els.sumTotal.textContent = rub(Math.max(0, subtotal + cutleryPrice + nightMarkup - promoDiscount));
+      if (els.sumTotal) els.sumTotal.textContent = rub(Math.max(0, subtotal + cutleryPrice + nightMarkup - pickupDiscount - promoDiscount));
     }
   } else {
     if (els.sumDelivery) els.sumDelivery.textContent = "0 ₽";
-    if (els.sumTotal) els.sumTotal.textContent = rub(Math.max(0, subtotal + cutleryPrice + nightMarkup - promoDiscount));
+    if (els.sumTotal) els.sumTotal.textContent = rub(Math.max(0, subtotal + cutleryPrice + nightMarkup - pickupDiscount - promoDiscount));
   }
 }
 
@@ -1720,11 +1743,12 @@ function buildOrderPayload(form) {
   const cutleryPaid = getCutleryPaidCount();
   const cutleryPrice = getCutleryPrice();
   const nightMarkup = getNightMarkup();
+  const pickupDiscount = getPickupDiscount();
   const promoDiscount = getPromoDiscount();
   const happyHoursDiscount = getHappyHoursDiscount();
   const manualPromoDiscount = happyHoursDiscount > 0 ? 0 : getManualPromoDiscount();
 
-  const total = Math.max(0, subtotal + cutleryPrice + nightMarkup + (delivery.price || 0) - promoDiscount);
+  const total = Math.max(0, subtotal + cutleryPrice + nightMarkup + (delivery.price || 0) - pickupDiscount - promoDiscount);
 
   return {
     createdAt: new Date().toISOString(),
@@ -1751,7 +1775,8 @@ function buildOrderPayload(form) {
     pricing: {
       tariff: getTariffInfo(getEffectiveOrderDate()).tariff,
       tariffLabel: getTariffInfo(getEffectiveOrderDate()).tariffLabel,
-      nightMarkup
+      nightMarkup,
+      pickupDiscount
     },
     promo: (state.promo.applied || happyHoursDiscount > 0) ? {
       code: state.promo.applied ? state.promo.code : 'HAPPY_HOURS',
