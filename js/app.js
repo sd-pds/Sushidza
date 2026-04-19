@@ -296,14 +296,26 @@ function rub(n) {
   return `${Math.round(Number(n) || 0)} ₽`;
 }
 
+let toastTimer = null;
+
 function showToast(msg) {
   if (!els.toast) {
     alert(msg);
     return;
   }
+
+  if (toastTimer) {
+    clearTimeout(toastTimer);
+    toastTimer = null;
+  }
+
   els.toast.textContent = msg;
   els.toast.classList.add("isOn");
-  setTimeout(() => els.toast.classList.remove("isOn"), 2600);
+
+  toastTimer = setTimeout(() => {
+    els.toast.classList.remove("isOn");
+    toastTimer = null;
+  }, 2600);
 }
 
 function loadCart() {
