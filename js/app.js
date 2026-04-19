@@ -227,6 +227,14 @@ let ZONES_NIGHT = null;
 let PROMOS = [];
 let PROMOTION_BANNERS = [];
 
+const PICKUP_POINTS = [
+  { value: "Оренбург, Театральная 1/1", dayOnly: true },
+  { value: "Оренбург, 27 Линия 60", dayOnly: false },
+  { value: "Оренбург, Кичигина 8", dayOnly: true }
+];
+
+const PROMO_GIFT_PLACEHOLDER_IMAGE = "./assets/photos/нет фото.webp";
+
 let state = {
   category: "Все",
   query: "",
@@ -253,9 +261,12 @@ let state = {
   promo: {
     code: "",
     title: "",
+    type: "percent",
     percent: 0,
     discount: 0,
-    applied: false
+    applied: false,
+    minSubtotal: 0,
+    gifts: []
   }
 };
 
@@ -295,19 +306,31 @@ function getCartKey(id, variantIndex = 1) {
   return `${id}__v${normalizeVariantIndex(variantIndex)}`;
 }
 
+function getPromoGiftCartKey(id, variantIndex = 1) {
+  return `gift:${id}__v${normalizeVariantIndex(variantIndex)}`;
+}
+
+function isPromoGiftCartKey(key) {
+  return String(key || "").startsWith("gift:");
+}
+
 function parseCartKey(key) {
   const raw = String(key || "");
-  const match = raw.match(/^(.*)__v(\d+)$/);
+  const isGift = raw.startsWith("gift:");
+  const normalized = isGift ? raw.slice(5) : raw;
+  const match = normalized.match(/^(.*)__v(\d+)$/);
   if (match) {
     return {
       id: match[1],
-      variantIndex: normalizeVariantIndex(match[2])
+      variantIndex: normalizeVariantIndex(match[2]),
+      isGift
     };
   }
 
   return {
-    id: raw,
-    variantIndex: 1
+    id: normalized,
+    variantIndex: 1,
+    isGift
   };
 }
 
@@ -356,11 +379,37 @@ function getVariantByIndex(product, variantIndex = 1) {
   };
 }
 
+function getPromoGiftConfigById(id) {
+  if (!Array.isArray(state.promo?.gifts)) return null;
+  return state.promo.gifts.find(item => item?.id === id) || null;
+}
+
+function createFallbackGiftProduct(id) {
+  const config = getPromoGiftConfigById(id);
+  if (!config) return null;
+  return {
+    id,
+    name: config.name || id,
+    price: Number(config.originalPrice || 0),
+    weight: String(config.weight || "").trim(),
+    img: config.img || PROMO_GIFT_PLACEHOLDER_IMAGE
+  };
+}
+
 function getCartEntry(key) {
-  const { id, variantIndex } = parseCartKey(key);
-  const product = MENU.find(x => x.id === id);
-  const variant = getVariantByIndex(product, variantIndex);
-  return { id, variantIndex, product, variant, key };
+  const { id, variantIndex, isGift } = parseCartKey(key);
+  const product = MENU.find(x => x.id === id) || (isGift ? createFallbackGiftProduct(id) : null);
+  const baseVariant = getVariantByIndex(product, variantIndex);
+  const giftConfig = isGift ? getPromoGiftConfigById(id) : null;
+  const variant = isGift
+    ? {
+        ...baseVariant,
+        price: 0,
+        originalPrice: Number(product?.price ?? giftConfig?.originalPrice ?? 0),
+        img: baseVariant.img || giftConfig?.img || PROMO_GIFT_PLACEHOLDER_IMAGE
+      }
+    : baseVariant;
+  return { id, variantIndex, product, variant, key, isGift, giftConfig };
 }
 
 function cartCount() {
@@ -374,6 +423,126 @@ function cartSum() {
     if (entry.product) sum += Number(entry.variant.price || 0) * qty;
   }
   return Math.round(sum);
+}
+
+function getPaidItemsSubtotal() {
+  let sum = 0;
+  for (const [key, qty] of Object.entries(state.cart)) {
+    const entry = getCartEntry(key);
+    if (!entry.product || entry.isGift) continue;
+    sum += Number(entry.variant.price || 0) * qty;
+  }
+  return Math.round(sum);
+}
+
+function removePromoGiftItems() {
+  let changed = false;
+  for (const key of Object.keys(state.cart)) {
+    if (!isPromoGiftCartKey(key)) continue;
+    delete state.cart[key];
+    changed = true;
+  }
+  return changed;
+}
+
+function giftPromoConditionsMet(promo = state.promo) {
+  const minSubtotal = Number(promo?.minSubtotal || 0);
+  if (!promo?.applied || promo?.type !== 'gift' || !Array.isArray(promo?.gifts) || !promo.gifts.length) return false;
+  if (getPaidItemsSubtotal() < minSubtotal) return false;
+
+  return promo.gifts.every(gift => {
+    const key = getPromoGiftCartKey(gift.id, 1);
+    return Number(state.cart[key] || 0) === 1;
+  });
+}
+
+function syncPromoGiftItems() {
+  if (!state.promo?.applied || state.promo?.type !== 'gift') {
+    return false;
+  }
+
+  const meetsSubtotal = getPaidItemsSubtotal() >= Number(state.promo.minSubtotal || 0);
+  let changed = false;
+
+  if (!meetsSubtotal) {
+    changed = removePromoGiftItems() || changed;
+    return changed;
+  }
+
+  for (const gift of state.promo.gifts || []) {
+    const key = getPromoGiftCartKey(gift.id, 1);
+    if (state.cart[key] !== 1) {
+      state.cart[key] = 1;
+      changed = true;
+    }
+  }
+
+  return changed;
+}
+
+function resetAppliedPromo(options = {}) {
+  const { resetInput = false, render = true, message = '' } = options;
+  const hadGiftPromo = state.promo?.applied && state.promo?.type === 'gift';
+
+  state.promo = {
+    code: "",
+    title: "",
+    type: "percent",
+    percent: 0,
+    discount: 0,
+    applied: false,
+    minSubtotal: 0,
+    gifts: []
+  };
+
+  if (hadGiftPromo) {
+    removePromoGiftItems();
+  }
+
+  if (resetInput && els.promoCodeInput) {
+    els.promoCodeInput.value = "";
+  }
+
+  if (els.promoHint) {
+    els.promoHint.textContent = "Введите промокод и нажмите «Применить».";
+  }
+
+  saveCart();
+
+  if (render) {
+    renderCart();
+    renderTotals();
+  }
+
+  if (message) {
+    showToast(message);
+  }
+}
+
+function syncAppliedPromo(options = {}) {
+  const { showResetToast = false, resetInput = false } = options;
+  if (!state.promo?.applied) return;
+
+  if (state.promo.type === 'gift') {
+    if (!giftPromoConditionsMet(state.promo)) {
+      resetAppliedPromo({
+        resetInput,
+        render: true,
+        message: showResetToast ? 'Промокод сброшен: для подарка нужен заказ от 1500 ₽ по товарам.' : ''
+      });
+      return;
+    }
+
+    const changed = syncPromoGiftItems();
+    if (changed) {
+      saveCart();
+      renderCart();
+      renderTotals();
+      return;
+    }
+  }
+
+  renderTotals();
 }
 
 function openDrawer() {
@@ -425,6 +594,7 @@ function addToCart(id, variantIndex = 1, sourceEl = null) {
   const key = getCartKey(id, variantIndex);
   state.cart[key] = (state.cart[key] || 0) + 1;
   saveCart();
+  syncAppliedPromo();
 
   if (sourceEl) {
     animateToCart(sourceEl);
@@ -435,18 +605,29 @@ function addToCart(id, variantIndex = 1, sourceEl = null) {
 
 function decFromCart(key) {
   if (!state.cart[key]) return;
+
+  if (isPromoGiftCartKey(key)) {
+    resetAppliedPromo({
+      resetInput: true,
+      render: true,
+      message: 'Подарочные онигири убраны. Промокод сброшен.'
+    });
+    return;
+  }
+
   state.cart[key] -= 1;
   if (state.cart[key] <= 0) delete state.cart[key];
   saveCart();
   renderCart();
-  renderTotals();
+  syncAppliedPromo({ showResetToast: true });
 }
 
 function incFromCart(key) {
+  if (isPromoGiftCartKey(key)) return;
   state.cart[key] = (state.cart[key] || 0) + 1;
   saveCart();
   renderCart();
-  renderTotals();
+  syncAppliedPromo();
 }
 
 function renderCart() {
@@ -463,22 +644,29 @@ function renderCart() {
       const qty = state.cart[key];
 
       const row = document.createElement("div");
-      row.className = "cartItem";
+      row.className = `cartItem${entry.isGift ? ' cartItem--gift' : ''}`;
+      const originalPrice = Number(entry.variant.originalPrice || 0);
+      const priceMarkup = entry.isGift
+        ? `<span class="cartItem__giftPrice">0 ₽</span>${originalPrice > 0 ? `<s class="cartItem__oldPrice">${rub(originalPrice)}</s>` : ''}`
+        : rub(entry.variant.price);
       row.innerHTML = `
         <img src="${entry.variant.img || p.img}" alt="">
         <div>
-          <div class="cartItem__name">${escapeHtml(p.name)}</div>
-          <div class="cartItem__meta">${rub(entry.variant.price)}${entry.variant.weight ? ` • ${escapeHtml(entry.variant.weight)}` : ""}</div>
+          <div class="cartItem__name">${escapeHtml(p.name)}${entry.isGift ? ' <span class="cartItem__giftBadge">Подарок</span>' : ''}</div>
+          <div class="cartItem__meta"><span class="cartItem__prices">${priceMarkup}</span>${entry.variant.weight ? ` • ${escapeHtml(entry.variant.weight)}` : ""}</div>
         </div>
-        <div class="qty">
-          <button type="button" data-act="dec">−</button>
+        <div class="qty${entry.isGift ? ' qty--gift' : ''}">
+          <button type="button" data-act="dec">${entry.isGift ? '×' : '−'}</button>
           <span>${qty}</span>
-          <button type="button" data-act="inc">+</button>
+          ${entry.isGift ? '' : '<button type="button" data-act="inc">+</button>'}
         </div>
       `;
 
       row.querySelector('[data-act="dec"]').addEventListener("click", () => decFromCart(key));
-      row.querySelector('[data-act="inc"]').addEventListener("click", () => incFromCart(key));
+      const incBtn = row.querySelector('[data-act="inc"]');
+      if (incBtn) {
+        incBtn.addEventListener("click", () => incFromCart(key));
+      }
 
       els.cartItems.appendChild(row);
     }
@@ -679,10 +867,21 @@ function parsePromos(raw) {
     .map(item => ({
       code: String(item?.code || "").trim(),
       title: String(item?.title || item?.name || item?.label || item?.code || "").trim(),
+      type: String(item?.type || (item?.gifts ? 'gift' : 'percent')).trim().toLowerCase(),
       percent: Number(item?.percent || item?.discountPercent || 0),
+      minSubtotal: Number(item?.minSubtotal || item?.minSubtotalProducts || 0),
+      gifts: Array.isArray(item?.gifts)
+        ? item.gifts.map(gift => ({
+            id: String(gift?.id || '').trim(),
+            name: String(gift?.name || gift?.title || gift?.id || '').trim(),
+            originalPrice: Number(gift?.originalPrice || gift?.price || 0),
+            weight: String(gift?.weight || '').trim(),
+            img: String(gift?.img || '').trim()
+          })).filter(gift => gift.id)
+        : [],
       active: item?.active !== false
     }))
-    .filter(item => item.code && item.percent > 0 && item.active);
+    .filter(item => item.code && item.active && ((item.type === 'gift' && item.gifts.length > 0) || (item.type !== 'gift' && item.percent > 0)));
 }
 
 function normalizePromoCode(value) {
@@ -708,19 +907,12 @@ function getManualPromoDiscount() {
   return Math.min(getBaseTotalBeforePromo(), Math.round(getBaseTotalBeforePromo() * state.promo.percent / 100));
 }
 
-function isHappyHoursActive(date = getEffectiveOrderDate()) {
-  const d = toOrenburgDate(date);
-  const day = d.getDay();
-  const minutes = d.getHours() * 60 + d.getMinutes();
-  const isWeekday = day >= 1 && day <= 5;
-  return isWeekday && minutes >= 11 * 60 && minutes < 16 * 60;
+function isHappyHoursActive() {
+  return false;
 }
 
 function getHappyHoursDiscount() {
-  const subtotal = cartSum();
-  if (subtotal <= 0) return 0;
-  if (!isHappyHoursActive(getEffectiveOrderDate())) return 0;
-  return Math.round(subtotal * 0.10);
+  return 0;
 }
 
 function getPromoDiscount() {
@@ -738,23 +930,7 @@ function getActiveDiscountLabel() {
 }
 
 function clearPromoState(resetInput = false) {
-  state.promo = {
-    code: "",
-    title: "",
-    percent: 0,
-    discount: 0,
-    applied: false
-  };
-
-  if (resetInput && els.promoCodeInput) {
-    els.promoCodeInput.value = "";
-  }
-
-  if (els.promoHint) {
-    els.promoHint.textContent = "Скидка применяется ко всей стоимости заказа, если промокод активен.";
-  }
-
-  renderTotals();
+  resetAppliedPromo({ resetInput, render: true });
 }
 
 function applyPromoCode(showSuccessToast = true) {
@@ -775,10 +951,45 @@ function applyPromoCode(showSuccessToast = true) {
     return false;
   }
 
+  resetAppliedPromo({ render: false });
+
   state.promo.code = promo.code;
   state.promo.title = promo.title || promo.code;
-  state.promo.percent = promo.percent;
+  state.promo.type = promo.type === 'gift' ? 'gift' : 'percent';
+  state.promo.percent = promo.type === 'gift' ? 0 : promo.percent;
   state.promo.applied = true;
+  state.promo.discount = 0;
+  state.promo.minSubtotal = Number(promo.minSubtotal || 0);
+  state.promo.gifts = Array.isArray(promo.gifts) ? promo.gifts.map(gift => ({ ...gift })) : [];
+
+  if (state.promo.type === 'gift') {
+    const minSubtotal = state.promo.minSubtotal;
+    if (getPaidItemsSubtotal() < minSubtotal) {
+      resetAppliedPromo({ render: false });
+      if (els.promoHint) {
+        els.promoHint.textContent = `Промокод действует на заказ от ${minSubtotal} ₽ по товарам.`;
+      }
+      showToast(`Промокод действует на заказ от ${minSubtotal} ₽ по товарам`);
+      renderTotals();
+      return false;
+    }
+
+    syncPromoGiftItems();
+    saveCart();
+    renderCart();
+    renderTotals();
+
+    if (els.promoHint) {
+      els.promoHint.textContent = `Промокод применён: ${state.promo.title}. 3 онигири добавлены в корзину.`;
+    }
+
+    if (showSuccessToast) {
+      showToast('Промокод ОНИГИРИ применён. 3 онигири добавлены в корзину.');
+    }
+
+    return true;
+  }
+
   state.promo.discount = getPromoDiscount();
 
   if (els.promoHint) {
@@ -815,16 +1026,11 @@ function setupPromoControls() {
       }
 
       if (state.promo.applied && current !== normalizePromoCode(state.promo.code)) {
-        state.promo = {
-          code: "",
-          title: "",
-          percent: 0,
-          discount: 0,
-          applied: false
-        };
+        resetAppliedPromo({ render: false });
         if (els.promoHint) {
-          els.promoHint.textContent = "Код изменён. Нажмите «Применить», чтобы пересчитать скидку.";
+          els.promoHint.textContent = "Код изменён. Нажмите «Применить», чтобы пересчитать промокод.";
         }
+        renderCart();
         renderTotals();
       }
     });
@@ -1158,12 +1364,36 @@ function syncWhenRestrictions() {
   }
 }
 
+function syncPickupOptions({ showToastOnChange = false } = {}) {
+  const select = els.checkoutForm?.elements?.pickupAddress;
+  if (!select) return;
+
+  const isNight = isNightTariff(getEffectiveOrderDate());
+  const availablePoints = PICKUP_POINTS.filter(point => !isNight || !point.dayOnly);
+  const fallbackValue = availablePoints[0]?.value || '';
+  const currentValue = select.value;
+
+  select.innerHTML = availablePoints
+    .map(point => `<option value="${escapeHtml(point.value)}">${escapeHtml(point.value)}</option>`)
+    .join('');
+
+  if (availablePoints.some(point => point.value === currentValue)) {
+    select.value = currentValue;
+  } else if (fallbackValue) {
+    select.value = fallbackValue;
+    if (showToastOnChange && currentValue && currentValue !== fallbackValue) {
+      showToast('В ночное время самовывоз доступен только с адреса Оренбург, 27 Линия 60');
+    }
+  }
+}
+
 async function updateZonesByEffectiveTime() {
   const tariffInfo = getTariffInfo(getEffectiveOrderDate());
 
   state.pricing.tariff = tariffInfo.tariff;
   state.pricing.tariffLabel = tariffInfo.tariffLabel;
   state.pricing.nightMarkup = getNightMarkup();
+  syncPickupOptions({ showToastOnChange: state.mode === 'pickup' });
 
   if (tariffInfo.tariff === "night" && ZONES_NIGHT) {
     ZONES = ZONES_NIGHT;
@@ -1406,6 +1636,7 @@ function setMode(mode) {
   btns.forEach(b => b.classList.toggle("isOn", b.dataset.mode === mode));
 
   if (mode === "pickup") {
+    syncPickupOptions({ showToastOnChange: true });
     if (els.pickupBlock) {
       els.pickupBlock.hidden = false;
       els.pickupBlock.style.display = "block";
@@ -1442,13 +1673,16 @@ function buildOrderPayload(form) {
       variant: variant.index,
       name: p?.name || entry.id,
       price: Number(variant.price || 0),
+      originalPrice: Number(entry.isGift ? (variant.originalPrice || 0) : (variant.price || 0)),
       qty,
       sum: Number(variant.price || 0) * qty,
-      weight: variant.weight || ""
+      weight: variant.weight || "",
+      isGift: !!entry.isGift
     };
   });
 
   const subtotal = items.reduce((a, b) => a + b.sum, 0);
+  const paidItemsSubtotal = getPaidItemsSubtotal();
 
   let delivery = {
     type: "pickup",
@@ -1508,6 +1742,7 @@ function buildOrderPayload(form) {
     comment: form.comment.value.trim(),
     items,
     subtotal,
+    paidItemsSubtotal,
     cutlery: {
       count: cutleryCount,
       paidCount: cutleryPaid,
@@ -1835,6 +2070,7 @@ async function init() {
       await sendOrder(payload);
 
       state.cart = {};
+      resetAppliedPromo({ resetInput: true, render: false });
       saveCart();
       renderCart();
       renderTotals();
@@ -1858,6 +2094,9 @@ async function init() {
 
   await updateZonesByEffectiveTime();
   syncWhenRestrictions();
+  syncPickupOptions();
+  removePromoGiftItems();
+  saveCart();
 
   renderTabs();
   renderProducts();

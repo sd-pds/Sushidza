@@ -5,6 +5,27 @@
       "code": "birthday",
       "percent": 10,
       "active": true
+    },
+    {
+      "title": "ОНИГИРИ",
+      "code": "ОНИГИРИ",
+      "type": "gift",
+      "minSubtotal": 1500,
+      "gifts": [
+        {
+          "id": "onigiri-kurica",
+          "name": "Онигири с курицей"
+        },
+        {
+          "id": "onigiri-krab",
+          "name": "Онигири с крабом"
+        },
+        {
+          "id": "onigiri-midii",
+          "name": "Онигири с мидиями"
+        }
+      ],
+      "active": true
     }
   ]
 }

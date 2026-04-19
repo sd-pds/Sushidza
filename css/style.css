@@ -392,6 +392,11 @@ a{color:inherit;text-decoration:none}
 .cartItem img{width:52px; height:52px; border-radius:14px; object-fit:cover}
 .cartItem__name{font-weight:900; font-size:14px}
 .cartItem__meta{color:var(--muted); font-size:12px}
+.cartItem__prices{display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap}
+.cartItem__giftPrice{font-weight:900; color:var(--txt)}
+.cartItem__oldPrice{opacity:.72}
+.cartItem__giftBadge{display:inline-flex; margin-left:8px; padding:3px 8px; border-radius:999px; background:rgba(var(--accentRgb),.16); border:1px solid rgba(var(--accentRgb),.35); color:var(--accentSoft); font-size:11px; font-weight:900; vertical-align:middle}
+.cartItem--gift{border-color:rgba(var(--accentRgb),.24)}
 
 .qty{display:flex; gap:8px; align-items:center}
 .qty button{
@@ -404,6 +409,7 @@ a{color:inherit;text-decoration:none}
   box-shadow:0 12px 32px rgba(0,0,0,.22);
 }
 .qty span{min-width:18px; text-align:center; font-weight:900}
+.qty--gift button{font-size:18px; line-height:1}
 
 .modal__panel{
   position:absolute; left:50%; top:50%;
